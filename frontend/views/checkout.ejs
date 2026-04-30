@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Confirmed</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; text-align: center; padding: 50px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .check { color: #48bb78; font-size: 64px; }
+        .btn { display: inline-block; padding: 12px 24px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="check">✅</div>
+        <h1>Registration Confirmed!</h1>
+        <p style="margin: 10px;">Order ID: <strong><%= orderId %></strong></p>
+        <p style="font-size: 24px; color: #667eea; margin: 15px;">Total: <strong>$<%= total %></strong></p>
+        
+        <h3 style="margin-top: 20px;">Courses Registered:</h3>
+        <% items.forEach(item => { %>
+            <p><%= item.name %> - $<%= item.price %></p>
+        <% }) %>
+        
+        <a href="/" class="btn">Register More Courses</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= course.name %> - AI Recommendations</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; }
+        .header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; text-align: center; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .detail-card { background: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .detail-card h1 { color: #333; margin-bottom: 15px; }
+        .info { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; }
+        .info-item { text-align: center; }
+        .info-label { color: #666; font-size: 12px; text-transform: uppercase; }
+        .info-value { font-size: 20px; font-weight: bold; color: #333; margin-top: 5px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 5px; text-decoration: none; font-weight: bold; border: none; cursor: pointer; margin: 5px; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-success { background: #48bb78; color: white; }
+        .btn-secondary { background: #a0aec0; color: white; }
+        .rec-card { background: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .rec-card h2 { color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px; margin-bottom: 20px; }
+        .rec-item { padding: 15px; margin: 10px 0; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea; }
+        .rec-item h3 { color: #333; margin-bottom: 5px; }
+        .match { color: #667eea; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📖 <%= course.name %></h1>
+    </div>
+    
+    <div class="container">
+        <div class="detail-card">
+            <div class="info">
+                <div class="info-item">
+                    <div class="info-label">Price</div>
+                    <div class="info-value" style="color: #667eea;">$<%= course.price %></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Difficulty</div>
+                    <div class="info-value"><%= course.difficulty %></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Organization</div>
+                    <div class="info-value" style="font-size: 14px;"><%= course.org %></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Rating</div>
+                    <div class="info-value">★ <%= course.rating %></div>
+                </div>
+            </div>
+            <button onclick="addToCart(<%= course.id %>)" class="btn btn-success">🛒 Add to Cart</button>
+            <a href="/" class="btn btn-secondary">← Back</a>
+        </div>
+        
+        <div class="rec-card">
+            <h2>🤖 AI-Powered Course Recommendations</h2>
+            <p style="color: #666; margin-bottom: 20px;">Because you're interested in "<strong><%= course.name %></strong>"</p>
+            
+            <% if (recommendations.length > 0) { %>
+                <% recommendations.forEach(rec => { %>
+                    <div class="rec-item">
+                        <h3><%= rec.title %></h3>
+                        <p>
+                            <span class="match"><%= rec.similarity_score %>% Match</span> |
+                            Difficulty: <%= rec.difficulty %> |
+                            Rating: ★ <%= rec.rating %>
+                        </p>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p style="color: #999;">Recommendation service unavailable. Using fallback catalog.</p>
+            <% } %>
+        </div>
+    </div>
+    
+    <script>
+        async function addToCart(id) {
+            await fetch('/cart/add', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ courseId: id })
+            });
+            alert('✅ Course added to cart!');
+        }
+    </script>
+</body>
+</html>
