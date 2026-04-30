@@ -1,0 +1,59 @@
+---
+- name: Deploy Course Recommendation System
+  hosts: localhost
+  connection: local
+  become: yes
+  
+  vars:
+    project_name: course-recommendation
+    ml_port: 5000
+    
+  tasks:
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+      ignore_errors: yes
+      
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+      ignore_errors: yes
+      
+    - name: Build ML Docker image
+      command: docker build -t ml-recommender:v1 ./ml-service
+      args:
+        chdir: "{{ playbook_dir }}/.."
+      ignore_errors: yes
+      
+    - name: Run ML container
+      docker_container:
+        name: course-ml
+        image: ml-recommender:v1
+        state: started
+        restart_policy: always
+        ports:
+          - "5000:5000"
+      ignore_errors: yes
+      
+    - name: Install Node.js dependencies
+      command: npm install
+      args:
+        chdir: "{{ playbook_dir }}/../frontend"
+      ignore_errors: yes
+      
+    - name: Start Frontend application
+      shell: node server.js &
+      args:
+        chdir: "{{ playbook_dir }}/../frontend"
+      ignore_errors: yes
+      
+    - name: Deployment complete
+      debug:
+        msg: |
+          =====================================
+          ✅ Deployment Completed Successfully!
+          ML API: http://localhost:5000
+          Frontend: http://localhost:3000
+          =====================================

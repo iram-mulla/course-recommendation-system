@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-recommender
+  labels:
+    app: ml-recommender
+    project: course-recommendation
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ml-recommender
+  template:
+    metadata:
+      labels:
+        app: ml-recommender
+    spec:
+      containers:
+      - name: ml-api
+        image: ml-recommender:v1
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-service
+spec:
+  type: NodePort
+  selector:
+    app: ml-recommender
+  ports:
+  - port: 5000
+    targetPort: 5000
+    nodePort: 30005
