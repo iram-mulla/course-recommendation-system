@@ -170,10 +170,15 @@ app.post('/cart/add', checkAuth, (req, res) => {
 
 // Checkout (PROTECTED)
 app.post('/checkout', checkAuth, (req, res) => {
+    if (cart.length === 0) {
+        return res.redirect('/cart');
+    }
+    
     const orderId = 'ORD-' + Date.now().toString(36).toUpperCase();
     const total = cart.reduce((sum, item) => sum + item.priceINR, 0);
     const items = [...cart];
-    cart = [];
+    cart = []; // Clear cart
+    
     res.render('checkout', { 
         orderId, 
         items, 
