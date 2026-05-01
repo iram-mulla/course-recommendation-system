@@ -11,7 +11,6 @@
         .cart-badge { background: #667eea; color: white; padding: 8px 20px; border-radius: 20px; }
         .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
         .detail-card { background: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .detail-card h1 { color: #333; margin-bottom: 15px; }
         .info { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; }
         .info-item { text-align: center; }
         .info-label { color: #666; font-size: 12px; text-transform: uppercase; }
@@ -25,6 +24,7 @@
         .rec-item { padding: 15px; margin: 10px 0; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea; }
         .rec-item h3 { color: #333; margin-bottom: 5px; }
         .match { color: #667eea; font-weight: bold; }
+        .offline-notice { background: #fff3e0; padding: 10px; border-radius: 5px; color: #e65100; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -72,13 +72,13 @@
         
         <div class="rec-card">
             <h2>🤖 AI-Powered Course Recommendations</h2>
-            <p style="color: #666; margin-bottom: 20px;">Because you're interested in "<strong><%= course.name %></strong>"</p>
+            <p style="color: #666; margin-bottom: 20px;">Based on your interest in "<strong><%= course.name %></strong>"</p>
             
             <% if (recommendations.length > 0) { %>
                 <% if (typeof mlStatus !== 'undefined' && mlStatus === 'offline') { %>
-                    <p style="background: #fff3e0; padding: 10px; border-radius: 5px; color: #e65100; margin-bottom: 15px;">
-                        ⚠️ ML Service offline - Showing catalog recommendations
-                    </p>
+                    <div class="offline-notice">
+                        ⚠️ ML Service is currently offline - Showing catalog-based recommendations
+                    </div>
                 <% } %>
                 <% recommendations.forEach(rec => { %>
                     <div class="rec-item">

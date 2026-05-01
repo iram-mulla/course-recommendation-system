@@ -50,7 +50,7 @@ function checkAuth(req, res, next) {
 
 // ===== ROUTES =====
 
-// Login page (accessible without auth)
+// Login page
 app.get('/login', (req, res) => {
     if (req.session.user) {
         return res.redirect('/');
@@ -66,10 +66,10 @@ app.post('/login', (req, res) => {
         req.session.user = user;
         return res.redirect('/');
     }
-    res.render('login', { error: '❌ Invalid email or password!', user: null });
+    res.render('login', { error: 'Invalid email or password!', user: null });
 });
 
-// Register page (accessible without auth)
+// Register page
 app.get('/register', (req, res) => {
     if (req.session.user) {
         return res.redirect('/');
@@ -80,20 +80,28 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
     const { name, email, password, confirmPassword } = req.body;
     
+    if (!name || !email || !password || !confirmPassword) {
+        return res.render('register', { error: 'All fields are required!', success: null, user: null });
+    }
+    
     if (password !== confirmPassword) {
-        return res.render('register', { error: '❌ Passwords do not match!', success: null, user: null });
+        return res.render('register', { error: 'Passwords do not match!', success: null, user: null });
+    }
+    
+    if (password.length < 6) {
+        return res.render('register', { error: 'Password must be at least 6 characters!', success: null, user: null });
     }
     
     const existingUser = users.find(u => u.email === email);
     if (existingUser) {
-        return res.render('register', { error: '❌ Email already registered!', success: null, user: null });
+        return res.render('register', { error: 'Email already registered!', success: null, user: null });
     }
     
     users.push({ name, email, password });
-    res.render('register', { error: null, success: '✅ Registration successful! Please login.', user: null });
+    res.render('register', { error: null, success: 'Registration successful! Please login now.', user: null });
 });
 
-// Home page (PROTECTED - requires login)
+// Home page (PROTECTED)
 app.get('/', checkAuth, (req, res) => {
     res.render('index', { 
         courses, 
@@ -101,6 +109,7 @@ app.get('/', checkAuth, (req, res) => {
         user: req.session.user
     });
 });
+
 // Course detail (PROTECTED)
 app.get('/course/:id', checkAuth, async (req, res) => {
     const course = courses.find(c => c.id == req.params.id);
@@ -116,9 +125,8 @@ app.get('/course/:id', checkAuth, async (req, res) => {
         });
         recommendations = response.data.recommendations || [];
     } catch (error) {
-        console.error('ML Service Offline:', error.message);
+        console.error('ML Service Offline, using fallback');
         mlStatus = 'offline';
-        // Show related courses from catalog as fallback
         recommendations = courses
             .filter(c => c.id !== course.id)
             .slice(0, 5)
@@ -186,15 +194,14 @@ app.get('/health', (req, res) => {
     res.json({ 
         status: 'healthy', 
         mlService: ML_SERVICE_URL,
-        usersRegistered: users.length,
-        env: process.env.NODE_ENV || 'development'
+        usersRegistered: users.length
     });
 });
 
 app.listen(PORT, () => {
     console.log('='.repeat(50));
-    console.log(`🎓 Server running on port ${PORT}`);
-    console.log(`🔗 ML Service: ${ML_SERVICE_URL}`);
-    console.log(`👤 Demo: student@college.edu / student123`);
+    console.log(`Server running on port ${PORT}`);
+    console.log(`ML Service: ${ML_SERVICE_URL}`);
+    console.log(`Demo: student@college.edu / student123`);
     console.log('='.repeat(50));
 });

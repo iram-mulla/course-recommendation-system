@@ -14,10 +14,10 @@
         .btn { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; }
         .btn:hover { background: #5a67d8; }
         .error { background: #fce4ec; color: #c62828; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; }
-        .links { text-align: center; margin-top: 20px; }
-        .links a { color: #667eea; text-decoration: none; font-weight: bold; }
         .register-link { margin-top: 20px; padding: 15px; background: #f0f2f5; border-radius: 5px; text-align: center; }
         .register-link a { color: #48bb78; font-weight: bold; text-decoration: none; font-size: 16px; }
+        .back-link { text-align: center; margin-top: 15px; }
+        .back-link a { color: #667eea; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -25,7 +25,7 @@
         <h1>🔐 Student Login</h1>
         
         <% if (error) { %>
-            <div class="error"><%= error %></div>
+            <div class="error">❌ <%= error %></div>
         <% } %>
         
         <form method="POST" action="/login">
@@ -45,7 +45,7 @@
             <a href="/register">📝 Create New Account</a>
         </div>
         
-        <div class="links" style="margin-top: 15px;">
+        <div class="back-link">
             <a href="/">← Back to Home</a>
         </div>
     </div>
