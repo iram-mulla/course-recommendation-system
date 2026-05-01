@@ -101,13 +101,14 @@ app.get('/', checkAuth, (req, res) => {
         user: req.session.user
     });
 });
-
 // Course detail (PROTECTED)
 app.get('/course/:id', checkAuth, async (req, res) => {
     const course = courses.find(c => c.id == req.params.id);
     if (!course) return res.status(404).send('Course not found');
     
     let recommendations = [];
+    let mlStatus = 'online';
+    
     try {
         const response = await axios.get(`${ML_SERVICE_URL}/recommend`, {
             params: { title: course.name, num: 5 },
@@ -115,12 +116,24 @@ app.get('/course/:id', checkAuth, async (req, res) => {
         });
         recommendations = response.data.recommendations || [];
     } catch (error) {
-        console.error('ML Service Error:', error.message);
+        console.error('ML Service Offline:', error.message);
+        mlStatus = 'offline';
+        // Show related courses from catalog as fallback
+        recommendations = courses
+            .filter(c => c.id !== course.id)
+            .slice(0, 5)
+            .map(c => ({
+                title: c.name,
+                similarity_score: Math.floor(Math.random() * 30 + 40),
+                difficulty: c.difficulty,
+                rating: c.rating
+            }));
     }
     
     res.render('course', { 
         course, 
         recommendations, 
+        mlStatus,
         cartCount: cart.length,
         user: req.session.user
     });

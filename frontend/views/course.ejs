@@ -75,6 +75,11 @@
             <p style="color: #666; margin-bottom: 20px;">Because you're interested in "<strong><%= course.name %></strong>"</p>
             
             <% if (recommendations.length > 0) { %>
+                <% if (typeof mlStatus !== 'undefined' && mlStatus === 'offline') { %>
+                    <p style="background: #fff3e0; padding: 10px; border-radius: 5px; color: #e65100; margin-bottom: 15px;">
+                        ⚠️ ML Service offline - Showing catalog recommendations
+                    </p>
+                <% } %>
                 <% recommendations.forEach(rec => { %>
                     <div class="rec-item">
                         <h3><%= rec.title %></h3>
@@ -86,7 +91,7 @@
                     </div>
                 <% }) %>
             <% } else { %>
-                <p style="color: #999;">Recommendation service unavailable. Using fallback catalog.</p>
+                <p style="color: #999;">No recommendations available at this time.</p>
             <% } %>
         </div>
     </div>
