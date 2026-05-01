@@ -1,205 +1,156 @@
 """
-ML Model Serving API using Flask
-This provides the recommendation API endpoint
+ML Model Serving API - Auto-trains if no model found
 """
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, jsonify
 import pandas as pd
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
 import pickle
 import os
 from datetime import datetime
 
 app = Flask(__name__)
 
-# Global variables for model artifacts
-tfidf = None
 cosine_sim = None
 courses_df = None
 indices = None
 
-def load_model():
-    """Load the trained model artifacts"""
-    global tfidf, cosine_sim, courses_df, indices
+def load_or_train_model():
+    """Load existing model or train new one"""
+    global cosine_sim, courses_df, indices
     
-    print("Loading model artifacts...")
+    # Check if pre-trained model exists
+    if os.path.exists('cosine_sim.pkl') and os.path.exists('courses_df.pkl'):
+        print("Loading pre-trained model...")
+        try:
+            with open('cosine_sim.pkl', 'rb') as f:
+                cosine_sim = pickle.load(f)
+            courses_df = pd.read_pickle('courses_df.pkl')
+            indices = pd.Series(courses_df.index, index=courses_df['course_title'])
+            indices = indices[~indices.index.duplicated(keep='first')]
+            print(f"✅ Model loaded! {len(courses_df)} courses available.")
+            return True
+        except Exception as e:
+            print(f"Error loading model: {e}")
     
+    # Train new model
+    print("Training new model...")
     try:
-        with open('tfidf_vectorizer.pkl', 'rb') as f:
-            tfidf = pickle.load(f)
+        # Check for dataset
+        data_paths = ['Coursera.csv', '../dataset/Coursera.csv', 'dataset/Coursera.csv']
+        data_path = None
+        for path in data_paths:
+            if os.path.exists(path):
+                data_path = path
+                break
         
-        with open('cosine_sim.pkl', 'rb') as f:
-            cosine_sim = pickle.load(f)
+        if data_path is None:
+            print("❌ No dataset found. Creating sample data...")
+            # Create sample course data
+            sample_data = {
+                'Course Name': [
+                    'Machine Learning', 'Deep Learning', 'Python Programming',
+                    'Data Science', 'Cloud Computing', 'Neural Networks',
+                    'Natural Language Processing', 'SQL for Data Analysis',
+                    'AI Fundamentals', 'Computer Vision'
+                ],
+                'University': [
+                    'Stanford', 'DeepLearning.AI', 'UMich', 'IBM', 'AWS',
+                    'Stanford', 'DeepLearning.AI', 'UC Davis', 'Google', 'MIT'
+                ],
+                'Difficulty Level': [
+                    'Intermediate', 'Advanced', 'Beginner', 'Intermediate',
+                    'Beginner', 'Advanced', 'Advanced', 'Beginner',
+                    'Beginner', 'Advanced'
+                ],
+                'Course Rating': [4.9, 4.8, 4.8, 4.7, 4.5, 4.9, 4.6, 4.7, 4.8, 4.7],
+                'Course URL': [''] * 10,
+                'Course Description': [
+                    'Learn ML algorithms and techniques',
+                    'Deep neural networks and architectures',
+                    'Programming with Python language',
+                    'Data analysis and visualization',
+                    'Cloud platforms and services',
+                    'Neural network architectures',
+                    'Text and language processing',
+                    'Database query language',
+                    'Artificial intelligence basics',
+                    'Image recognition and processing'
+                ],
+                'Skills': [
+                    'ML, Statistics', 'Deep Learning, CNN', 'Python, Programming',
+                    'Data, Analytics', 'AWS, Cloud', 'Neural Networks, AI',
+                    'NLP, Text', 'SQL, Database', 'AI, ML', 'CV, Image'
+                ]
+            }
+            courses_df = pd.DataFrame(sample_data)
+        else:
+            print(f"Loading dataset from: {data_path}")
+            courses_df = pd.read_csv(data_path)
         
-        courses_df = pd.read_pickle('courses_df.pkl')
+        # Rename columns
+        courses_df.rename(columns={
+            'Course Name': 'course_title',
+            'University': 'course_organization',
+            'Difficulty Level': 'course_difficulty',
+            'Course Rating': 'course_rating',
+            'Course Description': 'course_description',
+            'Skills': 'skills'
+        }, inplace=True)
         
-        # Handle duplicate course titles
+        # Fill missing values
+        for col in ['course_title', 'course_description', 'skills']:
+            if col in courses_df.columns:
+                courses_df[col] = courses_df[col].fillna('')
+        
+        # Create combined features
+        courses_df['combined_features'] = (
+            courses_df['course_title'] + ' ' + 
+            courses_df.get('course_description', '') + ' ' + 
+            courses_df.get('skills', '')
+        )
+        
+        # Build TF-IDF
+        print("Building TF-IDF matrix...")
+        tfidf = TfidfVectorizer(stop_words='english', max_features=1000)
+        tfidf_matrix = tfidf.fit_transform(courses_df['combined_features'])
+        
+        # Compute similarity
+        print("Computing cosine similarity...")
+        cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+        
+        # Create indices
         indices = pd.Series(courses_df.index, index=courses_df['course_title'])
-        # Keep only first occurrence of each course title
         indices = indices[~indices.index.duplicated(keep='first')]
         
-        print(f"Model loaded successfully! {len(courses_df)} courses available.")
+        # Save model
+        with open('cosine_sim.pkl', 'wb') as f:
+            pickle.dump(cosine_sim, f)
+        courses_df.to_pickle('courses_df.pkl')
+        
+        print(f"✅ Model trained! {len(courses_df)} courses available.")
         return True
+        
     except Exception as e:
-        print(f"Error loading model: {e}")
+        print(f"❌ Error training model: {e}")
         return False
-
-def find_course(course_title):
-    """Find course by title (case-insensitive)"""
-    # Exact match first
-    if course_title in indices:
-        return course_title
-    
-    # Case-insensitive search
-    matching = courses_df[courses_df['course_title'].str.contains(
-        course_title, case=False, na=False, regex=False
-    )]
-    
-    if not matching.empty:
-        return matching['course_title'].iloc[0]
-    
-    return None
-
-def get_recommendations(course_title, num_recommendations=5):
-    """
-    Get course recommendations based on content similarity
-    """
-    # Try to find the course
-    found_title = find_course(course_title)
-    
-    if found_title is None:
-        return {
-            'error': f'Course "{course_title}" not found',
-            'suggestion': 'Try searching with a different term',
-            'available_courses': courses_df['course_title'].head(20).tolist()
-        }
-    
-    try:
-        # Get the index of the course
-        idx = indices[found_title]
-        
-        # Get similarity scores
-        sim_scores = list(enumerate(cosine_sim[idx]))
-        
-        # Sort by similarity score
-        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-        
-        # Get top N recommendations (excluding the course itself)
-        sim_scores = sim_scores[1:num_recommendations+1]
-        
-        # Get course indices
-        course_indices = [i[0] for i in sim_scores]
-        similarity_scores = [round(i[1] * 100, 2) for i in sim_scores]
-        
-        # Get course details
-        recommendations = []
-        for idx_val, score in zip(course_indices, similarity_scores):
-            course = courses_df.iloc[idx_val]
-            recommendation = {
-                'title': str(course['course_title']),
-                'similarity_score': score,
-                'organization': str(course.get('course_organization', 'N/A')),
-                'difficulty': str(course.get('course_difficulty', 'N/A')),
-                'rating': float(course.get('course_rating', 0)) if pd.notna(course.get('course_rating', 0)) else 0
-            }
-            recommendations.append(recommendation)
-        
-        return {
-            'input_course': found_title,
-            'recommendations': recommendations,
-            'timestamp': datetime.now().isoformat()
-        }
-    except Exception as e:
-        return {
-            'error': f'Error generating recommendations: {str(e)}',
-            'input_course': course_title
-        }
-
-# HTML Template for the API home page
-HTML_TEMPLATE = """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Course Recommendation API</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            border-bottom: 2px solid #4CAF50;
-            padding-bottom: 10px;
-        }
-        .endpoint {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-left: 4px solid #4CAF50;
-            margin: 20px 0;
-        }
-        code {
-            background-color: #eee;
-            padding: 2px 6px;
-            border-radius: 3px;
-        }
-        .sample {
-            background-color: #e8f5e9;
-            padding: 10px;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🎓 Course Recommendation ML API</h1>
-        <p>Welcome to the Course Recommendation System API</p>
-        
-        <div class="endpoint">
-            <h3>API Endpoint</h3>
-            <p><strong>GET</strong> <code>/recommend?title=CourseName</code></p>
-            <p><strong>Example:</strong></p>
-            <div class="sample">
-                <code>/recommend?title=Machine%20Learning</code>
-            </div>
-            <p><strong>Optional parameter:</strong> <code>num</code> (number of recommendations, default=5)</p>
-        </div>
-        
-        <div class="endpoint">
-            <h3>Available Courses (Sample)</h3>
-            <ul>
-                {% for course in sample_courses %}
-                <li>{{ course }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        
-        <div class="endpoint">
-            <h3>Health Check</h3>
-            <p><strong>GET</strong> <code>/health</code></p>
-        </div>
-    </div>
-</body>
-</html>
-"""
 
 @app.route('/')
 def home():
-    """Home page with API documentation"""
-    sample_courses = []
-    if courses_df is not None:
-        sample_courses = courses_df['course_title'].head(10).tolist()
-    return render_template_string(HTML_TEMPLATE, sample_courses=sample_courses)
+    sample = courses_df['course_title'].head(10).tolist() if courses_df is not None else []
+    sample_html = ''.join([f'<li>{c}</li>' for c in sample])
+    return f"""
+    <h1>🎓 Course Recommendation API</h1>
+    <p>Use <code>/recommend?title=CourseName</code></p>
+    <p>Example: <a href="/recommend?title=Machine Learning">/recommend?title=Machine Learning</a></p>
+    <p><a href="/health">Health Check</a></p>
+    <h3>Sample Courses:</h3>
+    <ul>{sample_html}</ul>
+    """
 
 @app.route('/health')
 def health():
-    """Health check endpoint"""
     return jsonify({
         'status': 'healthy',
         'service': 'Course Recommendation ML API',
@@ -210,74 +161,71 @@ def health():
 
 @app.route('/recommend', methods=['GET'])
 def recommend():
-    """
-    Get course recommendations
-    Query parameters:
-        title (required): Course title to base recommendations on
-        num (optional): Number of recommendations (default=5, max=10)
-    """
-    # Get parameters
-    course_title = request.args.get('title')
-    num_recommendations = request.args.get('num', 5, type=int)
+    global courses_df, indices, cosine_sim
     
-    # Validate input
+    course_title = request.args.get('title', '').strip()
+    num = request.args.get('num', 5, type=int)
+    
     if not course_title:
+        return jsonify({'error': 'Please provide a course title'}), 400
+    
+    if num > 10: num = 10
+    if num < 1: num = 1
+    
+    # Find course (case-insensitive)
+    matched_title = None
+    for title in indices.index:
+        if course_title.lower() in title.lower():
+            matched_title = title
+            break
+    
+    if not matched_title:
         return jsonify({
-            'error': 'Please provide a course title',
-            'usage': '/recommend?title=CourseName&num=5'
-        }), 400
+            'error': f'Course not found',
+            'sample_courses': courses_df['course_title'].head(10).tolist()
+        }), 404
     
-    if num_recommendations > 10:
-        num_recommendations = 10
-    elif num_recommendations < 1:
-        num_recommendations = 1
-    
-    # Get recommendations
-    result = get_recommendations(course_title, num_recommendations)
-    
-    if 'error' in result:
-        return jsonify(result), 404
-    
-    return jsonify(result)
+    try:
+        idx = indices[matched_title]
+        sim_scores = list(enumerate(cosine_sim[idx]))
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+        sim_scores = sim_scores[1:num+1]
+        
+        recommendations = []
+        for i, score in sim_scores:
+            course = courses_df.iloc[i]
+            rec = {
+                'title': str(course['course_title']),
+                'similarity_score': round(score * 100, 2),
+                'organization': str(course.get('course_organization', 'N/A')),
+                'difficulty': str(course.get('course_difficulty', 'N/A')),
+                'rating': float(course.get('course_rating', 0)) if 'course_rating' in course else 0
+            }
+            recommendations.append(rec)
+        
+        return jsonify({
+            'input_course': matched_title,
+            'recommendations': recommendations,
+            'timestamp': datetime.now().isoformat()
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-@app.route('/courses', methods=['GET'])
+@app.route('/courses')
 def list_courses():
-    """List all available courses"""
-    if courses_df is None:
-        return jsonify({'error': 'Model not loaded'}), 500
-    
-    # Get search query
     search = request.args.get('search', '')
-    
-    if search:
+    if search and courses_df is not None:
         filtered = courses_df[courses_df['course_title'].str.contains(search, case=False, na=False)]
-        # Select only existing columns
-        available_cols = [col for col in ['course_title', 'course_organization', 'course_difficulty', 'course_rating'] 
-                         if col in filtered.columns]
-        courses_list = filtered[available_cols].head(50).to_dict('records')
+        result = filtered[['course_title']].head(20).to_dict('records')
     else:
-        available_cols = [col for col in ['course_title', 'course_organization', 'course_difficulty', 'course_rating'] 
-                         if col in courses_df.columns]
-        courses_list = courses_df[available_cols].head(50).to_dict('records')
-    
-    return jsonify({
-        'total_courses': len(courses_list),
-        'courses': courses_list
-    })
+        result = courses_df[['course_title']].head(20).to_dict('records') if courses_df is not None else []
+    return jsonify({'courses': result})
 
 if __name__ == '__main__':
-    # Load model
-    load_model()
-    
+    print("=" * 50)
+    print("🚀 Starting Course Recommendation ML API...")
+    load_or_train_model()
     port = int(os.environ.get('PORT', 5000))
-    debug = os.environ.get('DEBUG', 'False').lower() == 'true'
-    
-    print(f"\n{'='*50}")
-    print(f"ML Service starting on port {port}")
-    print(f"Debug mode: {debug}")
-    print(f"API Documentation: http://localhost:{port}/")
-    print(f"Health Check: http://localhost:{port}/health")
-    print(f"Recommendations: http://localhost:{port}/recommend?title=Machine%20Learning")
-    print(f"{'='*50}\n")
-    
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    print(f"📡 Server running on port {port}")
+    print("=" * 50)
+    app.run(host='0.0.0.0', port=port)
