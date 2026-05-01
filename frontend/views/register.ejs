@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - Course Registration</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #667eea, #764ba2); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .register-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 400px; }
+        .register-box h1 { text-align: center; color: #667eea; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #333; font-weight: bold; }
+        .form-group input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 16px; }
+        .btn { width: 100%; padding: 12px; background: #48bb78; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .btn:hover { background: #38a169; }
+        .error { background: #fce4ec; color: #c62828; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+        .success { background: #e8f5e9; color: #2e7d32; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+        .links { text-align: center; margin-top: 20px; }
+        .links a { color: #667eea; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="register-box">
+        <h1>📝 Student Registration</h1>
+        
+        <% if (error) { %>
+            <div class="error"><%= error %></div>
+        <% } %>
+        <% if (success) { %>
+            <div class="success"><%= success %></div>
+        <% } %>
+        
+        <form method="POST" action="/register">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" required placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required placeholder="Create password">
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" name="confirmPassword" required placeholder="Confirm password">
+            </div>
+            <button type="submit" class="btn">Register</button>
+        </form>
+        
+        <div class="links">
+            <p>Already have an account? <a href="/login">Login here</a></p>
+        </div>
+    </div>
+</body>
+</html>

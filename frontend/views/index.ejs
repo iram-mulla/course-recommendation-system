@@ -33,9 +33,18 @@
     </div>
     
     <div class="nav">
-        <a href="/">🏠 Home</a>
-        <a href="/cart" class="cart-badge">🛒 Cart (<%= cartCount %>)</a>
+    <a href="/">🏠 Home</a>
+    <div>
+        <% if (user) { %>
+            <span style="margin-right: 20px;">👤 <%= user.name %></span>
+            <a href="/cart" class="cart-badge">🛒 Cart (<%= cartCount %>)</a>
+            <a href="/logout" style="color: #e53e3e; margin-left: 15px;">Logout</a>
+        <% } else { %>
+            <a href="/login" style="color: #667eea;">Login</a>
+            <a href="/register" class="cart-badge" style="margin-left: 10px;">Register</a>
+        <% } %>
     </div>
+</div>
     
     <div class="container">
         <h2>📚 Available Courses</h2>
@@ -48,7 +57,7 @@
                     <p class="org"><%= course.org %></p>
                     <span class="difficulty <%= course.difficulty %>"><%= course.difficulty %></span>
                     <p class="rating">★ <%= course.rating %></p>
-                    <p class="price">$<%= course.price %></p>
+                    <p class="price">₹<%= course.priceINR.toLocaleString('en-IN') %></p>
                     <a href="/course/<%= course.id %>" class="btn">View & Get AI Recommendations</a>
                 </div>
             <% }) %>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Course Registration</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #667eea, #764ba2); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 400px; }
+        .login-box h1 { text-align: center; color: #667eea; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #333; font-weight: bold; }
+        .form-group input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 16px; }
+        .form-group input:focus { border-color: #667eea; outline: none; }
+        .btn { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .btn:hover { background: #5a67d8; }
+        .error { background: #fce4ec; color: #c62828; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; }
+        .links { text-align: center; margin-top: 20px; }
+        .links a { color: #667eea; text-decoration: none; }
+        .demo { background: #e8f5e9; padding: 15px; border-radius: 5px; margin-top: 20px; font-size: 14px; }
+        .demo strong { color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>🔐 Student Login</h1>
+        
+        <% if (error) { %>
+            <div class="error"><%= error %></div>
+        <% } %>
+        
+        <form method="POST" action="/login">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required placeholder="student@college.edu">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required placeholder="Enter password">
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        
+        <div class="demo">
+            <p><strong>Demo Credentials:</strong></p>
+            <p>Email: student@college.edu</p>
+            <p>Password: student123</p>
+        </div>
+        
+        <div class="links">
+            <p>Don't have an account? <a href="/register">Register here</a></p>
+            <p><a href="/">← Back to Home</a></p>
+        </div>
+    </div>
+</body>
+</html>
