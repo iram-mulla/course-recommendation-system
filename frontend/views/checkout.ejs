@@ -1,38 +1,110 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Order Confirmed</title>
+    <title>Checkout Payment</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; text-align: center; padding: 50px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .check { color: #48bb78; font-size: 64px; }
-        .btn { display: inline-block; padding: 12px 24px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
-        .order-details { text-align: left; margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; }
-        .order-item { padding: 10px 0; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; }
+        .nav { background: white; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .nav a { color: #667eea; text-decoration: none; font-weight: bold; }
+        .cart-badge { background: #667eea; color: white; padding: 8px 20px; border-radius: 20px; }
+        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: white; border-radius: 10px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .summary-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .summary-total { text-align: right; font-size: 24px; margin-top: 10px; font-weight: bold; color: #667eea; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 5px; text-decoration: none; font-weight: bold; border: none; cursor: pointer; font-size: 16px; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-success { background: #48bb78; color: white; }
+        .field { margin-bottom: 18px; }
+        .field label { display: block; font-weight: bold; margin-bottom: 6px; color: #333; }
+        .field input, .field select { width: 100%; padding: 12px; border: 1px solid #dcdcdc; border-radius: 6px; }
+        .error { background: #fdecea; color: #c53030; padding: 12px; border-radius: 8px; margin-bottom: 18px; }
     </style>
 </head>
 <body>
+    <div class="nav">
+        <a href="/">🏠 Home</a>
+        <div>
+            <% if (user) { %>
+                <span style="margin-right: 20px;">👤 <%= user.name %></span>
+                <% if (user.isAdmin) { %>
+                    <a href="/admin" class="cart-badge" style="margin-right: 10px;">📊 Admin</a>
+                <% } %>
+                <a href="/cart" class="cart-badge">🛒 Cart (<%= cartCount %>)</a>
+                <a href="/logout" style="color: #e53e3e; margin-left: 15px;">Logout</a>
+            <% } %>
+        </div>
+    </div>
+
     <div class="container">
-        <div class="check">✅</div>
-        <h1>Registration Confirmed!</h1>
-        <p style="margin: 10px; color: #666;">Order ID: <strong><%= orderId %></strong></p>
-        
-        <div class="order-details">
-            <h3 style="margin-bottom: 15px;">📋 Courses Registered:</h3>
-            <% items.forEach(item => { %>
-                <div class="order-item">
-                    <span><strong><%= item.name %></strong> - <%= item.org %></span>
-                    <span style="color: #667eea; font-weight: bold;">₹<%= item.priceINR.toLocaleString('en-IN') %></span>
+        <div class="card">
+            <h2>🧾 Order Summary</h2>
+            <% cart.forEach(item => { %>
+                <div class="summary-item">
+                    <div>
+                        <strong><%= item.name %></strong>
+                        <div style="color:#666; font-size: 13px; margin-top: 4px;"> <%= item.org %> • <%= item.difficulty %></div>
+                    </div>
+                    <div style="font-weight:bold; color:#667eea;">₹<%= item.priceINR.toLocaleString('en-IN') %></div>
                 </div>
             <% }) %>
-            
-            <div style="text-align: right; margin-top: 20px; font-size: 24px; font-weight: bold; color: #667eea;">
-                Total Paid: ₹<%= total %>
-            </div>
+            <div class="summary-total">Total: ₹<%= total %></div>
         </div>
-        
-        <a href="/" class="btn">📚 Register More Courses</a>
+
+        <div class="card">
+            <h2>💳 Payment Options</h2>
+            <% if (error) { %>
+                <div class="error"><%= error %></div>
+            <% } %>
+            <form method="POST" action="/checkout">
+                <div class="field">
+                    <label>Select Payment Method</label>
+                    <select id="paymentMethod" name="paymentMethod" onchange="toggleFields()" required>
+                        <option value="">Choose a method</option>
+                        <option value="razorpay">Razorpay (Dummy)</option>
+                        <option value="stripe">Stripe (Dummy)</option>
+                        <option value="card">Credit/Debit Card</option>
+                        <option value="upi">UPI</option>
+                        <option value="netbanking">NetBanking</option>
+                    </select>
+                </div>
+
+                <div id="cardFields" class="field" style="display:none;">
+                    <label>Card Number</label>
+                    <input type="text" name="cardNumber" placeholder="1234 5678 9012 3456">
+                </div>
+
+                <div id="upiFields" class="field" style="display:none;">
+                    <label>UPI ID</label>
+                    <input type="text" name="upiId" placeholder="example@bank">
+                </div>
+
+                <div id="bankFields" class="field" style="display:none;">
+                    <label>Select Bank</label>
+                    <select name="bankName">
+                        <option value="">Choose Bank</option>
+                        <option value="HDFC">HDFC Bank</option>
+                        <option value="ICICI">ICICI Bank</option>
+                        <option value="SBI">State Bank of India</option>
+                        <option value="Axis">Axis Bank</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success">✅ Pay ₹<%= total %></button>
+            </form>
+
+            <p style="margin-top: 14px; color: #666; font-size: 14px;">This page simulates payment flow for Razorpay/Stripe, UPI, card, and net banking.</p>
+        </div>
     </div>
+
+    <script>
+        function toggleFields() {
+            const method = document.getElementById('paymentMethod').value;
+            document.getElementById('cardFields').style.display = method === 'card' ? 'block' : 'none';
+            document.getElementById('upiFields').style.display = method === 'upi' ? 'block' : 'none';
+            document.getElementById('bankFields').style.display = method === 'netbanking' ? 'block' : 'none';
+        }
+    </script>
 </body>
 </html>
