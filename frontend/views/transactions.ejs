@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transaction History</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; }
+        .nav { background: white; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .nav a { color: #667eea; text-decoration: none; font-weight: bold; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 10px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 14px; border-bottom: 1px solid #eee; }
+        th { color: #333; }
+        .status-success { color: #2f855a; font-weight: bold; }
+        .btn { display: inline-block; padding: 10px 18px; border-radius: 5px; background: #667eea; color: white; text-decoration: none; font-weight: bold; }
+        .empty { padding: 40px; text-align: center; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="/">🏠 Home</a>
+        <div>
+            <% if (user) { %>
+                <span style="margin-right: 20px;">👤 <%= user.name %></span>
+                <a href="/logout" style="color: #e53e3e;">Logout</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h1>Transaction History</h1>
+            <% if (orders.length === 0) { %>
+                <div class="empty">
+                    <h2>No past orders found.</h2>
+                    <p>Browse courses and complete a registration to see your history here.</p>
+                    <p><a href="/" class="btn">Browse Courses</a></p>
+                </div>
+            <% } else { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Amount</th>
+                            <th>Payment</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Invoice</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(order => { %>
+                            <tr>
+                                <td><%= order.id %></td>
+                                <td>₹<%= order.total.toLocaleString('en-IN') %></td>
+                                <td><%= order.paymentMethod %></td>
+                                <td class="status-success"><%= order.status %></td>
+                                <td><%= order.createdAt.toLocaleString() %></td>
+                                <td><a href="/invoice/<%= order.id %>" class="btn">View</a></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>
