@@ -22,8 +22,11 @@
         .Advanced { background: #fce4ec; color: #c62828; }
         .price { font-size: 28px; font-weight: bold; color: #667eea; margin: 10px 0; }
         .rating { color: #f6c23e; font-weight: bold; margin: 5px 0; }
+        .description { color: #555; margin: 10px 0 12px; line-height: 1.4; }
         .btn { display: inline-block; padding: 10px 24px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; }
         .btn:hover { background: #5a67d8; }
+        .btn-secondary { background: #a0aec0; }
+        .btn-secondary:hover { background: #718096; }
     </style>
 </head>
 <body>
@@ -37,8 +40,13 @@
     <div>
         <% if (user) { %>
             <span style="margin-right: 20px;">👤 <%= user.name %></span>
-            <a href="/cart" class="cart-badge">🛒 Cart (<%= cartCount %>)</a>
-            <a href="/logout" style="color: #e53e3e; margin-left: 15px;">Logout</a>
+            <% if (user.isAdmin) { %>
+                <a href="/admin" class="cart-badge" style="margin-right: 10px;">📊 Admin</a>
+                <a href="/logout" style="color: #e53e3e; margin-left: 15px;">Logout</a>
+            <% } else { %>
+                <a href="/cart" class="cart-badge">🛒 Cart (<%= cartCount %>)</a>
+                <a href="/logout" style="color: #e53e3e; margin-left: 15px;">Logout</a>
+            <% } %>
         <% } else { %>
             <a href="/login" style="color: #667eea;">Login</a>
             <a href="/register" class="cart-badge" style="margin-left: 10px;">Register</a>
@@ -55,10 +63,13 @@
                 <div class="card">
                     <h3><%= course.name %></h3>
                     <p class="org"><%= course.org %></p>
+                    <p class="description"><%= course.description %></p>
                     <span class="difficulty <%= course.difficulty %>"><%= course.difficulty %></span>
                     <p class="rating">★ <%= course.rating %></p>
                     <p class="price">₹<%= course.priceINR.toLocaleString('en-IN') %></p>
-                    <a href="/course/<%= course.id %>" class="btn">View & Get AI Recommendations</a>
+                    <div>
+                        <a href="/course/<%= course.id %>" class="btn">View & Recommend</a>
+                    </div>
                 </div>
             <% }) %>
         </div>

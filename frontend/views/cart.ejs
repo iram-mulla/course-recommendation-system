@@ -26,6 +26,9 @@
         <div>
             <% if (user) { %>
                 <span style="margin-right: 20px;">👤 <%= user.name %></span>
+                <% if (user.isAdmin) { %>
+                    <a href="/admin" class="cart-badge" style="margin-right: 10px;">📊 Admin</a>
+                <% } %>
                 <a href="/cart" class="cart-badge">🛒 Cart (<%= cartCount %>)</a>
                 <a href="/logout" style="color: #e53e3e; margin-left: 15px;">Logout</a>
             <% } else { %>
