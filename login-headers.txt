@@ -1,0 +1,17 @@
+HTTP/1.1 302 Found
+Date: Wed, 06 May 2026 18:42:17 GMT
+Content-Type: text/plain; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+cf-cache-status: DYNAMIC
+location: /
+rndr-id: 7a06f457-cc7a-4233
+Server: cloudflare
+Set-Cookie: connect.sid=s%3AkTy89mRU4tfOSkfE4r1nP_2gBIJTRZ6C.EYE5C597HZzcM%2F7GhU6W9dU%2FBGGPCvrNG6D2xJVTsuc; Path=/; HttpOnly
+vary: Accept
+vary: Accept-Encoding
+x-powered-by: Express
+x-render-origin-server: Render
+CF-RAY: 9f7a1fbe1f53693a-BLR
+alt-svc: h3=":443"; ma=86400
+

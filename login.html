@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Course Registration System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; }
+        .header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; text-align: center; }
+        .header p { margin-top: 10px; opacity: 0.9; }
+        .nav { background: white; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; }
+        .nav a { color: #667eea; text-decoration: none; font-weight: bold; }
+        .cart-badge { background: #667eea; color: white; padding: 8px 20px; border-radius: 20px; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+        .card { background: white; border-radius: 10px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+        .card h3 { color: #333; margin-bottom: 10px; }
+        .org { color: #666; font-size: 14px; margin-bottom: 8px; }
+        .difficulty { display: inline-block; padding: 4px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 5px 0; }
+        .Beginner { background: #e8f5e9; color: #2e7d32; }
+        .Intermediate { background: #fff3e0; color: #e65100; }
+        .Advanced { background: #fce4ec; color: #c62828; }
+        .price { font-size: 28px; font-weight: bold; color: #667eea; margin: 10px 0; }
+        .rating { color: #f6c23e; font-weight: bold; margin: 5px 0; }
+        .btn { display: inline-block; padding: 10px 24px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; }
+        .btn:hover { background: #5a67d8; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎓 Student Course Registration System</h1>
+        <p>AI-Powered Recommendations | IaaS • PaaS • SaaS Cloud Deployment</p>
+    </div>
+    
+    <div class="nav">
+    <a href="/">🏠 Home</a>
+    <div>
+        
+            <span style="margin-right: 20px;">👤 Demo Student</span>
+            <a href="/cart" class="cart-badge">🛒 Cart (0)</a>
+            <a href="/logout" style="color: #e53e3e; margin-left: 15px;">Logout</a>
+        
+    </div>
+</div>
+    
+    <div class="container">
+        <h2>📚 Available Courses</h2>
+        <p style="color: #666; margin-top: 10px;">Click on any course to get AI-powered recommendations</p>
+        
+        <div class="grid">
+            
+                <div class="card">
+                    <h3>Machine Learning</h3>
+                    <p class="org">Stanford University</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.9</p>
+                    <p class="price">₹4,199</p>
+                    <a href="/course/1" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Deep Learning</h3>
+                    <p class="org">DeepLearning.AI</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.8</p>
+                    <p class="price">₹4,999</p>
+                    <a href="/course/2" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Python Programming</h3>
+                    <p class="org">University of Michigan</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.8</p>
+                    <p class="price">₹3,399</p>
+                    <a href="/course/3" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Data Science</h3>
+                    <p class="org">IBM</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.7</p>
+                    <p class="price">₹4,599</p>
+                    <a href="/course/4" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Cloud Computing</h3>
+                    <p class="org">AWS</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.5</p>
+                    <p class="price">₹3,799</p>
+                    <a href="/course/5" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Neural Networks</h3>
+                    <p class="org">Stanford University</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.9</p>
+                    <p class="price">₹5,499</p>
+                    <a href="/course/6" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Natural Language Processing</h3>
+                    <p class="org">DeepLearning.AI</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.6</p>
+                    <p class="price">₹4,999</p>
+                    <a href="/course/7" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>SQL</h3>
+                    <p class="org">UC Davis</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.7</p>
+                    <p class="price">₹2,999</p>
+                    <a href="/course/8" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Business Strategy</h3>
+                    <p class="org">Coursera Project Network</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.8</p>
+                    <p class="price">₹3,599</p>
+                    <a href="/course/9" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Solar Energy</h3>
+                    <p class="org">École Polytechnique</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.1</p>
+                    <p class="price">₹4,299</p>
+                    <a href="/course/10" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Finance for Managers</h3>
+                    <p class="org">IESE Business School</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.8</p>
+                    <p class="price">₹4,499</p>
+                    <a href="/course/11" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Programming Languages</h3>
+                    <p class="org">University of Washington</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.9</p>
+                    <p class="price">₹3,999</p>
+                    <a href="/course/12" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Business Russian Communication</h3>
+                    <p class="org">Saint Petersburg State University</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.5</p>
+                    <p class="price">₹2,899</p>
+                    <a href="/course/13" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Agile Projects</h3>
+                    <p class="org">Coursera Project Network</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4</p>
+                    <p class="price">₹3,499</p>
+                    <a href="/course/14" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Cybersecurity</h3>
+                    <p class="org">IBM</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.3</p>
+                    <p class="price">₹4,999</p>
+                    <a href="/course/15" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Blockchain</h3>
+                    <p class="org">INSEAD</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.7</p>
+                    <p class="price">₹5,499</p>
+                    <a href="/course/16" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>TensorFlow</h3>
+                    <p class="org">DeepLearning.AI</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.6</p>
+                    <p class="price">₹4,799</p>
+                    <a href="/course/17" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Data Visualization</h3>
+                    <p class="org">University of California, Davis</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.6</p>
+                    <p class="price">₹3,699</p>
+                    <a href="/course/18" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Digital Marketing</h3>
+                    <p class="org">University of Illinois</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.6</p>
+                    <p class="price">₹3,299</p>
+                    <a href="/course/19" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Project Management</h3>
+                    <p class="org">University of California, Irvine</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.5</p>
+                    <p class="price">₹3,999</p>
+                    <a href="/course/20" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Android App Development</h3>
+                    <p class="org">Vanderbilt University</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4</p>
+                    <p class="price">₹4,499</p>
+                    <a href="/course/21" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>iOS Development</h3>
+                    <p class="org">University of Toronto</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4</p>
+                    <p class="price">₹4,799</p>
+                    <a href="/course/22" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Web Development</h3>
+                    <p class="org">University of London</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.5</p>
+                    <p class="price">₹3,499</p>
+                    <a href="/course/23" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>JavaScript</h3>
+                    <p class="org">Coursera Project Network</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.2</p>
+                    <p class="price">₹2,999</p>
+                    <a href="/course/24" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>HTML</h3>
+                    <p class="org">Coursera Project Network</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.7</p>
+                    <p class="price">₹1,999</p>
+                    <a href="/course/25" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>CSS</h3>
+                    <p class="org">Coursera Project Network</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.7</p>
+                    <p class="price">₹1,999</p>
+                    <a href="/course/26" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>React</h3>
+                    <p class="org">The Hong Kong University of Science and Technology</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.6</p>
+                    <p class="price">₹4,299</p>
+                    <a href="/course/27" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Node.js</h3>
+                    <p class="org">Coursera Project Network</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.2</p>
+                    <p class="price">₹3,999</p>
+                    <a href="/course/28" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>MongoDB</h3>
+                    <p class="org">University of London</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.5</p>
+                    <p class="price">₹3,699</p>
+                    <a href="/course/29" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Django</h3>
+                    <p class="org">University of Michigan</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.6</p>
+                    <p class="price">₹4,299</p>
+                    <a href="/course/30" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Flask</h3>
+                    <p class="org">Coursera Project Network</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.5</p>
+                    <p class="price">₹3,499</p>
+                    <a href="/course/31" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>AWS</h3>
+                    <p class="org">Amazon Web Services</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4</p>
+                    <p class="price">₹4,999</p>
+                    <a href="/course/32" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Google Cloud Platform</h3>
+                    <p class="org">Google Cloud</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.7</p>
+                    <p class="price">₹5,299</p>
+                    <a href="/course/33" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Microsoft Azure</h3>
+                    <p class="org">LearnQuest</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.3</p>
+                    <p class="price">₹4,999</p>
+                    <a href="/course/34" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Docker</h3>
+                    <p class="org">Amazon Web Services</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4</p>
+                    <p class="price">₹3,999</p>
+                    <a href="/course/35" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Kubernetes</h3>
+                    <p class="org">Google Cloud</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.8</p>
+                    <p class="price">₹4,799</p>
+                    <a href="/course/36" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>DevOps</h3>
+                    <p class="org">Google Cloud</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.8</p>
+                    <p class="price">₹4,499</p>
+                    <a href="/course/37" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Linux</h3>
+                    <p class="org">The Linux Foundation</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.5</p>
+                    <p class="price">₹2,999</p>
+                    <a href="/course/38" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Git</h3>
+                    <p class="org">Google</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.8</p>
+                    <p class="price">₹2,499</p>
+                    <a href="/course/39" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Agile Software Development</h3>
+                    <p class="org">University of Alberta</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.7</p>
+                    <p class="price">₹3,799</p>
+                    <a href="/course/40" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Scrum</h3>
+                    <p class="org">University of Alberta</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.7</p>
+                    <p class="price">₹3,499</p>
+                    <a href="/course/41" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Software Engineering</h3>
+                    <p class="org">University of Alberta</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.3</p>
+                    <p class="price">₹4,299</p>
+                    <a href="/course/42" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Algorithms</h3>
+                    <p class="org">Stanford University</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.7</p>
+                    <p class="price">₹4,799</p>
+                    <a href="/course/43" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Data Structures</h3>
+                    <p class="org">University of California San Diego</p>
+                    <span class="difficulty Advanced">Advanced</span>
+                    <p class="rating">★ 4.7</p>
+                    <p class="price">₹4,599</p>
+                    <a href="/course/44" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Computer Programming</h3>
+                    <p class="org">University of Edinburgh</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.7</p>
+                    <p class="price">₹2,999</p>
+                    <a href="/course/45" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>C++</h3>
+                    <p class="org">University of Illinois</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.5</p>
+                    <p class="price">₹3,499</p>
+                    <a href="/course/46" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Java Programming</h3>
+                    <p class="org">University of California San Diego</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.7</p>
+                    <p class="price">₹3,799</p>
+                    <a href="/course/47" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Python for Everybody</h3>
+                    <p class="org">University of Michigan</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.8</p>
+                    <p class="price">₹3,399</p>
+                    <a href="/course/48" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>R Programming</h3>
+                    <p class="org">Johns Hopkins University</p>
+                    <span class="difficulty Beginner">Beginner</span>
+                    <p class="rating">★ 4.5</p>
+                    <p class="price">₹3,299</p>
+                    <a href="/course/49" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+                <div class="card">
+                    <h3>Statistics</h3>
+                    <p class="org">Duke University</p>
+                    <span class="difficulty Intermediate">Intermediate</span>
+                    <p class="rating">★ 4.4</p>
+                    <p class="price">₹3,599</p>
+                    <a href="/course/50" class="btn">View & Get AI Recommendations</a>
+                </div>
+            
+        </div>
+    </div>
+</body>
+</html>

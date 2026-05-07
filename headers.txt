@@ -1,0 +1,16 @@
+HTTP/1.1 500 Internal Server Error
+Date: Wed, 06 May 2026 18:41:53 GMT
+Content-Type: text/html; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+content-security-policy: default-src 'none'
+rndr-id: 27c1075d-78e8-4604
+Server: cloudflare
+vary: Accept-Encoding
+x-content-type-options: nosniff
+x-powered-by: Express
+x-render-origin-server: Render
+cf-cache-status: DYNAMIC
+CF-RAY: 9f7a1f26e9719dfa-BLR
+alt-svc: h3=":443"; ma=86400
+
