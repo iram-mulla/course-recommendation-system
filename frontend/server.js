@@ -14,6 +14,21 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.locals.formatDate = function(date) {
+    if (!date) return '';
+    const d = (typeof date === 'string' || typeof date === 'number') ? new Date(date) : date;
+    return d.toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    });
+};
+
 app.use(session({
     secret: 'course-secret-key-2026',
     resave: false,
@@ -357,7 +372,7 @@ app.get('/invoice/:orderId/pdf', checkAuth, (req, res) => {
         doc.text(`Order ID: ${order.id}`);
         doc.text(`Transaction ID: ${order.transactionId}`);
         doc.text(`Payment Method: ${order.paymentMethod}`);
-        doc.text(`Order Date: ${order.createdAt.toLocaleString()}`);
+        doc.text(`Order Date: ${app.locals.formatDate(order.createdAt)}`);
         doc.text(`Customer: ${order.userEmail}`);
         doc.moveDown();
         doc.fontSize(14).text('Courses Purchased:', { underline: true });

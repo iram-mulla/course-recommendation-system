@@ -51,7 +51,7 @@
                             <td><%= order.items.map(item => item.name).join(', ') %></td>
                             <td class="amount">₹<%= order.total.toLocaleString('en-IN') %></td>
                             <td><%= order.status %></td>
-                            <td><%= order.createdAt.toLocaleString() %></td>
+                            <td><%= formatDate(order.createdAt) %></td>
                             <td><a href="/invoice/<%= order.id %>" class="btn">View</a></td>
                         </tr>
                     <% }) %>

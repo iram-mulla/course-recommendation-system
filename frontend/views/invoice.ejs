@@ -43,12 +43,7 @@
                 <p><strong>Customer:</strong> <%= order.userEmail %></p>
                 <p><strong>Transaction ID:</strong> <%= order.transactionId %></p>
                 <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
-                <p><strong>Date:</strong> <%= order.createdAt.toLocaleString() %></p>
-            </div>
-
-            <div class="section">
-                <h3>Courses Purchased</h3>
-                <% order.items.forEach(item => { %>
+                    <p><strong>Date:</strong> <%= formatDate(order.createdAt) %></p>
                     <div class="item-row">
                         <span><strong><%= item.name %></strong><br><span style="color:#666; font-size:13px;"><%= item.org %></span></span>
                         <span>₹<%= item.priceINR.toLocaleString('en-IN') %></span>

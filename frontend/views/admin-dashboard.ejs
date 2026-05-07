@@ -83,7 +83,7 @@
                                 <tr>
                                     <td><%= order.id %></td>
                                     <td>₹<%= order.total.toLocaleString('en-IN') %></td>
-                                    <td><%= order.createdAt.toLocaleString() %></td>
+                                    <td><%= formatDate(order.createdAt) %></td>
                                 </tr>
                             <% }) %>
                         <% } %>
